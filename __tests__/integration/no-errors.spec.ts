@@ -86,6 +86,16 @@ test("integration - no errors - no declarations", async () => {
   expect(output.length).toEqual(1); // no other files
 });
 
+test("integration - no errors - fallback from TypeScript 7 module shape", async () => {
+	const { output } = await genBundle("index.ts", {
+		typescript: { version: "7.0.2" } as any,
+		clean: true,
+	});
+
+	expect(output[0].fileName).toEqual("index.js");
+	expect(findName(output, "index.d.ts")).toBeTruthy();
+});
+
 test("integration - no errors - allowJs + emitDeclarationOnly", async () => {
   const { output } = await genBundle("some-js-import.js", {
     include: ["**/*.js"],

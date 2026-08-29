@@ -1,5 +1,5 @@
 import * as path from "path";
-import * as tsTypes from "typescript";
+import * as tsTypes from "typescript-compat";
 import { createFilter as createRollupFilter, normalizePath as normalize } from "@rollup/pluginutils";
 
 import { tsModule } from "./tsproxy";
@@ -22,8 +22,9 @@ export function getOptionsOverrides({ useTsconfigDeclarationDir, cacheRoot }: IO
 	if (!preParsedTsconfig)
 		return overrides;
 
+	const defaultModuleResolution = tsModule.ModuleResolutionKind.Bundler ?? tsModule.ModuleResolutionKind.Node10;
 	if (preParsedTsconfig.options.moduleResolution === tsModule.ModuleResolutionKind.Classic)
-		overrides.moduleResolution = tsModule.ModuleResolutionKind.Node10;
+		overrides.moduleResolution = defaultModuleResolution;
 	if (preParsedTsconfig.options.module === undefined)
 		overrides.module = tsModule.ModuleKind.ES2015;
 

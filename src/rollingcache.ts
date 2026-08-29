@@ -1,8 +1,15 @@
 import { existsSync, readdirSync, renameSync } from "fs";
 import { emptyDirSync, ensureFileSync, readJsonSync, removeSync, writeJsonSync } from "fs-extra";
-import * as _ from "lodash";
 
 import { ICache } from "./icache";
+
+function arraysEqual(left: string[], right: string[])
+{
+	if (left.length !== right.length)
+		return false;
+
+	return left.every((entry, index) => entry === right[index]);
+}
 
 /**
  * Saves data in new cache folder or reads it from old one.
@@ -48,7 +55,7 @@ export class RollingCache<DataType> implements ICache<DataType>
 		if (!existsSync(this.oldCacheRoot))
 			return names.length === 0; // empty folder matches
 
-		return _.isEqual(readdirSync(this.oldCacheRoot).sort(), names.sort());
+		return arraysEqual(readdirSync(this.oldCacheRoot).sort(), names.sort());
 	}
 
 	/** @returns data for name, must exist in either old cache or new cache */

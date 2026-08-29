@@ -1,5 +1,5 @@
 import { test, expect } from "@jest/globals";
-import * as ts from "typescript";
+import * as ts from "typescript-compat";
 import { red } from "colors/safe";
 
 import { makeContext } from "./fixtures/context";

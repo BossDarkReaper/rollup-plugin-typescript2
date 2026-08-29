@@ -1,5 +1,5 @@
 import { relative, dirname, normalize as pathNormalize, resolve } from "path";
-import * as tsTypes from "typescript";
+import * as tsTypes from "typescript-compat";
 import { PluginImpl, InputOptions, TransformResult, SourceMap, Plugin } from "rollup";
 import { normalizePath as normalize } from "@rollup/pluginutils";
 import { blue, red, yellow, green } from "colors/safe";
@@ -9,7 +9,7 @@ import findCacheDir from "find-cache-dir";
 import { RollupContext, VerbosityLevel } from "./context";
 import { LanguageServiceHost } from "./host";
 import { TsCache, convertEmitOutput, getAllReferences, ICode } from "./tscache";
-import { tsModule, setTypescriptModule } from "./tsproxy";
+import { hasRequiredCompilerApi, resolveTypescriptModule, tsModule, setTypescriptModule } from "./tsproxy";
 import { IOptions } from "./ioptions";
 import { parseTsConfig } from "./parse-tsconfig";
 import { convertDiagnostic, printDiagnostics } from "./diagnostics";
@@ -119,9 +119,8 @@ const typescript: PluginImpl<RPT2Options> = (options) =>
 			cwd: process.cwd(),
 		}, options as IOptions);
 
-	if (!pluginOptions.typescript) {
-		pluginOptions.typescript = require("typescript");
-	}
+	const requestedTypescript = pluginOptions.typescript;
+	pluginOptions.typescript = resolveTypescriptModule(requestedTypescript);
 	setTypescriptModule(pluginOptions.typescript);
 	// eslint-disable-next-line prefer-const
 	documentRegistry = tsModule.createDocumentRegistry();
@@ -145,6 +144,10 @@ const typescript: PluginImpl<RPT2Options> = (options) =>
 
 			// print out all versions and configurations
 			context.info(`typescript version: ${tsModule.version}`);
+			if (requestedTypescript && !hasRequiredCompilerApi(requestedTypescript))
+				context.warn("The provided TypeScript module does not expose the classic compiler API; using bundled compatibility compiler instead.");
+			else if (!requestedTypescript && !hasRequiredCompilerApi(require("typescript")))
+				context.warn("The installed 'typescript' package does not expose the classic compiler API; using bundled compatibility compiler instead.");
 			context.info(`tslib version: ${tslibVersion}`);
 			context.info(`rollup version: ${this.meta.rollupVersion}`);
 

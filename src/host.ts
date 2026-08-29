@@ -1,4 +1,4 @@
-import * as tsTypes from "typescript";
+import * as tsTypes from "typescript-compat";
 import { normalizePath as normalize } from "@rollup/pluginutils";
 
 import { tsModule } from "./tsproxy";

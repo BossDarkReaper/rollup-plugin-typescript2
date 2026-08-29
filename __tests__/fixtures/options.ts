@@ -1,4 +1,4 @@
-import * as ts from "typescript";
+import * as ts from "typescript-compat";
 
 import { setTypescriptModule } from "../../src/tsproxy";
 import { IOptions } from "../../src/ioptions";

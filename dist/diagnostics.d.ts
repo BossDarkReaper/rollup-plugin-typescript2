@@ -1,4 +1,4 @@
-import * as tsTypes from "typescript";
+import * as tsTypes from "typescript-compat";
 import { RollupContext } from "./context";
 export interface IDiagnostics {
     flatMessage: string;

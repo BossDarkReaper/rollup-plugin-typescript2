@@ -1,5 +1,5 @@
 import * as path from "path";
-import * as tsTypes from "typescript";
+import * as tsTypes from "typescript-compat";
 
 import { tsModule } from "./tsproxy";
 
