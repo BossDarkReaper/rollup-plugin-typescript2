@@ -65,3 +65,15 @@ test("parseTsConfig - failed to parse", () => {
 
 	expect(context.error).toHaveBeenLastCalledWith(expect.stringContaining(`failed to parse '${notTsConfigPath}'`));
 });
+
+test("parseTsConfig - ignores prototype keys in overrides", () => {
+	const context = makeContext();
+
+	parseTsConfig(context, {
+		...defaultOpts,
+		tsconfigDefaults: JSON.parse("{\"__proto__\":{\"polluted\":\"yes\"}}"),
+		tsconfigOverride: JSON.parse("{\"constructor\":{\"prototype\":{\"polluted\":\"yes\"}}}"),
+	});
+
+	expect(({} as any).polluted).toBeUndefined();
+});

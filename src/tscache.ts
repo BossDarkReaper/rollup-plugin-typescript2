@@ -1,6 +1,5 @@
 import * as tsTypes from "typescript-compat";
 import * as fs from "fs-extra";
-import * as _ from "lodash";
 import { Graph, alg } from "graphlib";
 import objHash from "object-hash";
 import { blue, yellow, green } from "colors/safe";
@@ -57,11 +56,11 @@ export function getAllReferences(importer: string, snapshot: tsTypes.IScriptSnap
 
 	const info = tsModule.preProcessFile(snapshot.getText(0, snapshot.getLength()), true, true);
 
-	return _.compact(info.referencedFiles.concat(info.importedFiles).map((reference) =>
+	return info.referencedFiles.concat(info.importedFiles).map((reference) =>
 	{
 		const resolved = tsModule.nodeModuleNameResolver(reference.fileName, importer, options, tsModule.sys);
 		return resolved.resolvedModule?.resolvedFileName;
-	}));
+	}).filter((x): x is string => Boolean(x));
 }
 
 export class TsCache

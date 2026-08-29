@@ -1,11 +1,67 @@
 import { dirname } from "path";
-import * as _ from "lodash";
 
 import { tsModule } from "./tsproxy";
 import { RollupContext } from "./context";
 import { convertDiagnostic, printDiagnostics } from "./diagnostics";
 import { getOptionsOverrides } from "./get-options-overrides";
 import { IOptions } from "./ioptions";
+
+const blockedPrototypeKeys = new Set(["__proto__", "prototype", "constructor"]);
+
+function isRecord(value: unknown): value is Record<string, unknown>
+{
+	return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
+function deepMerge(target: unknown, source: unknown): unknown
+{
+	if (Array.isArray(target) && Array.isArray(source))
+	{
+		const out = target.slice();
+		source.forEach((sourceEntry, index) =>
+		{
+			const targetEntry = out[index];
+			out[index] = (Array.isArray(targetEntry) || isRecord(targetEntry)) && (Array.isArray(sourceEntry) || isRecord(sourceEntry))
+				? deepMerge(targetEntry, sourceEntry)
+				: sourceEntry;
+		});
+		return out;
+	}
+
+	if (isRecord(target) && isRecord(source))
+	{
+		const out: Record<string, unknown> = { ...target };
+		Object.entries(source).forEach(([key, sourceEntry]) =>
+		{
+			const targetEntry = out[key];
+			out[key] = (Array.isArray(targetEntry) || isRecord(targetEntry)) && (Array.isArray(sourceEntry) || isRecord(sourceEntry))
+				? deepMerge(targetEntry, sourceEntry)
+				: sourceEntry;
+		});
+		return out;
+	}
+
+	return source;
+}
+
+function sanitizeConfigValue(value: unknown): unknown
+{
+	if (Array.isArray(value))
+		return value.map(sanitizeConfigValue);
+
+	if (!value || typeof value !== "object")
+		return value;
+
+	const out: Record<string, unknown> = {};
+	Object.entries(value).forEach(([key, entry]) =>
+	{
+		if (blockedPrototypeKeys.has(key))
+			return;
+
+		out[key] = sanitizeConfigValue(entry);
+	});
+	return out;
+}
 
 export function parseTsConfig(context: RollupContext, pluginOptions: IOptions)
 {
@@ -36,8 +92,9 @@ export function parseTsConfig(context: RollupContext, pluginOptions: IOptions)
 		configFileName = fileName;
 	}
 
-	const mergedConfig = {};
-	_.merge(mergedConfig, pluginOptions.tsconfigDefaults, loadedConfig, pluginOptions.tsconfigOverride);
+	const mergedConfig = [pluginOptions.tsconfigDefaults, loadedConfig, pluginOptions.tsconfigOverride]
+		.map(sanitizeConfigValue)
+		.reduce((acc, entry) => isRecord(entry) ? deepMerge(acc, entry) as Record<string, unknown> : acc, {});
 
 	const preParsedTsConfig = tsModule.parseJsonConfigFileContent(mergedConfig, tsModule.sys, baseDir, getOptionsOverrides(pluginOptions), configFileName);
 	const compilerOptionsOverride = getOptionsOverrides(pluginOptions, preParsedTsConfig);
