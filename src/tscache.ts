@@ -1,4 +1,4 @@
-import * as tsTypes from "typescript";
+import * as tsTypes from "typescript-compat";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
 import { Graph, alg } from "graphlib";

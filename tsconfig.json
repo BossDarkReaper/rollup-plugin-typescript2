@@ -8,10 +8,11 @@
 		"noUnusedLocals": true,
 		"diagnostics": true,
 		"listFiles": true,
-		"moduleResolution": "node",
+		"moduleResolution": "bundler",
 		"forceConsistentCasingInFileNames": true,
 		"noImplicitReturns": true,
 		"strict": true,
+		"rootDir": "./src",
 		"outDir": "./build",
 		"allowSyntheticDefaultImports": true
 	},

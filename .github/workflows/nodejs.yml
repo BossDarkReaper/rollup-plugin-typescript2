@@ -34,3 +34,4 @@ jobs:
       env:
         CI: true
     - run: npm run test:coverage
+    - run: npm run test:ts7

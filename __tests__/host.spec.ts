@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, test, expect, jest } from "@jest/globals";
-import * as ts from "typescript";
+import * as ts from "typescript-compat";
 import * as path from "path";
 import { normalizePath as normalize } from "@rollup/pluginutils";
 import { remove, ensureDir, writeFile, ensureSymlink } from "fs-extra";
@@ -72,8 +72,7 @@ test("LanguageServiceHost", async () => {
 
 	// test misc functionality
 	expect(host.getCompilationSettings()).toEqual(testOpts);
-	// TODO: check against `normalize(require.resolve("typescript/lib/lib.dts"))` once https://github.com/microsoft/TypeScript/issues/49050 is fixed -- endsWith is just a workaround for now
-	expect(host.getDefaultLibFileName({}).endsWith("lib.d.ts")).toBeTruthy();
+	expect(host.getDefaultLibFileName({})).toEqual(expect.stringMatching(/lib(\.[^/\\]+)?\.d\.ts$/));
 	expect(host.getTypeRootsVersion()).toEqual(0);
 
 	// mock out trace

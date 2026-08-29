@@ -1,4 +1,4 @@
-import * as tsTypes from "typescript";
+import * as tsTypes from "typescript-compat";
 import { red, white, yellow } from "colors/safe";
 
 import { tsModule } from "./tsproxy";

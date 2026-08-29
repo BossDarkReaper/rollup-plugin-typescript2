@@ -1,6 +1,6 @@
 import { afterAll, test, expect } from "@jest/globals";
 import * as path from "path";
-import * as ts from "typescript";
+import * as ts from "typescript-compat";
 import { normalizePath as normalize } from "@rollup/pluginutils";
 import { remove } from "fs-extra";
 
@@ -93,6 +93,24 @@ test("getOptionsOverrides - with sourceMap", () => {
 		...forcedOptions,
 		declarationDir: undefined,
 		module: ts.ModuleKind.ES2015,
+	});
+});
+
+test("getOptionsOverrides - classic moduleResolution", () => {
+	const config = { ...defaultConfig };
+	const preParsedTsConfig = {
+		...defaultPreParsedTsConfig,
+		options: {
+			moduleResolution: ts.ModuleResolutionKind.Classic,
+		},
+	};
+
+	expect(getOptionsOverrides(config, preParsedTsConfig)).toStrictEqual({
+		...forcedOptions,
+		declarationDir: undefined,
+		module: ts.ModuleKind.ES2015,
+		moduleResolution: ts.ModuleResolutionKind.Bundler ?? ts.ModuleResolutionKind.Node10,
+		sourceRoot: undefined,
 	});
 });
 

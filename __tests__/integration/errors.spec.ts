@@ -55,7 +55,7 @@ test("integration - syntax error", async () => {
 
 test("integration - syntax error - abortOnError: false / check: false", async () => {
   const onwarn = jest.fn();
-  const err = "Unexpected token (Note that you need plugins to import files that are not JavaScript)";
+  const err = "declarations must be initialized (Note that you need plugins to import files that are not JavaScript)";
   await expect(genBundle("syntax.ts", { abortOnError: false }, onwarn)).rejects.toThrow(err);
   await expect(genBundle("syntax.ts", { check: false }, onwarn)).rejects.toThrow(err);
 });

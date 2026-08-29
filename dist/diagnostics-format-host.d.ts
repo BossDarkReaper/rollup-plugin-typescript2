@@ -1,6 +1,5 @@
-/// <reference types="node" />
 import * as path from "path";
-import * as tsTypes from "typescript";
+import * as tsTypes from "typescript-compat";
 export declare class FormatHost implements tsTypes.FormatDiagnosticsHost {
     getCurrentDirectory(): string;
     getCanonicalFileName: typeof path.normalize;

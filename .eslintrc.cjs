@@ -7,5 +7,6 @@ module.exports = {
 	ignorePatterns: ['dist/**', 'node_modules/**', 'build-self/**', '*.js', "__tests__/integration/fixtures/errors/**"],
 	rules: {
 		"@typescript-eslint/no-explicit-any": "off", // these are explicit, so they are intentional
+		"@typescript-eslint/no-require-imports": "off",
 	}
 };

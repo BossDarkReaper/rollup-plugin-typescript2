@@ -1,4 +1,4 @@
-import * as tsTypes from "typescript";
+import * as tsTypes from "typescript-compat";
 import { TransformerFactoryCreator } from "./ioptions";
 export declare class LanguageServiceHost implements tsTypes.LanguageServiceHost {
     private parsedConfig;
@@ -21,15 +21,12 @@ export declare class LanguageServiceHost implements tsTypes.LanguageServiceHost 
     getCurrentDirectory: () => string;
     useCaseSensitiveFileNames: () => boolean;
     getDefaultLibFileName: typeof tsTypes.getDefaultLibFilePath;
-    readDirectory: (path: string, extensions?: readonly string[] | undefined, exclude?: readonly string[] | undefined, include?: readonly string[] | undefined, depth?: number | undefined) => string[];
-    readFile: (path: string, encoding?: string | undefined) => string | undefined;
+    readDirectory: (path: string, extensions?: readonly string[], exclude?: readonly string[], include?: readonly string[], depth?: number) => string[];
+    readFile: (path: string, encoding?: string) => string | undefined;
     fileExists: (path: string) => boolean;
     directoryExists: (path: string) => boolean;
     getDirectories: (path: string) => string[];
     realpath: (path: string) => string;
-    trace: {
-        (...data: any[]): void;
-        (message?: any, ...optionalParams: any[]): void;
-    };
+    trace: (...data: any[]) => void;
 }
 //# sourceMappingURL=host.d.ts.map
